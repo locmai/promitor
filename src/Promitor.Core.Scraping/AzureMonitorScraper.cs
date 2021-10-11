@@ -9,6 +9,7 @@ using Promitor.Core.Metrics;
 using Promitor.Core.Scraping.Configuration.Model.Metrics;
 using Promitor.Integrations.AzureMonitor.Exceptions;
 using MetricDimension = Promitor.Core.Scraping.Configuration.Model.MetricDimension;
+using MetricDimensionFilterSegment = Promitor.Core.Scraping.Configuration.Model.MetricDimensionFilterSegment;
 
 namespace Promitor.Core.Scraping
 {
@@ -47,11 +48,14 @@ namespace Promitor.Core.Scraping
             // Determine the metric dimension to use, if any
             var dimensionName = DetermineMetricDimension(metricName, resourceDefinition, scrapeDefinition.AzureMetricConfiguration?.Dimension);
 
+            // Determine the list of filter segments to use, if any
+            var metricDimensionFilterSegments = DetermineMetricDimensionFilterSegments(metricName, resourceDefinition, scrapeDefinition.AzureMetricConfiguration?.Dimension);
+
             List<MeasuredMetric> measuredMetrics = new List<MeasuredMetric>();
             try
             {
                 // Query Azure Monitor for metrics
-                measuredMetrics = await AzureMonitorClient.QueryMetricAsync(metricName, dimensionName, aggregationType, aggregationInterval, resourceUri, metricFilter, metricLimit);
+                measuredMetrics = await AzureMonitorClient.QueryMetricAsync(metricName, dimensionName, aggregationType, aggregationInterval, resourceUri, metricFilter, metricLimit, metricDimensionFilterSegments);
             }
             catch (MetricInformationNotFoundException metricsNotFoundException)
             {
@@ -111,6 +115,26 @@ namespace Promitor.Core.Scraping
         protected virtual string DetermineMetricDimension(string metricName, TResourceDefinition resourceDefinition, MetricDimension dimension)
         {
             return dimension?.Name;
+        }
+
+        /// <summary>
+        ///     Determines the metric labels to include in the reported metric
+        /// </summary>
+        /// <param name="resourceDefinition">Contains the resource cast to the specific resource type.</param>
+        protected virtual Dictionary<string, string> DetermineMetricLabels(TResourceDefinition resourceDefinition)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        /// <summary>
+        ///     Determines the filter segment for a metric to use
+        /// </summary>
+        /// <param name="metricName">Name of the metric being queried</param>
+        /// <param name="resourceDefinition">Contains the resource cast to the specific resource type.</param>
+        /// <param name="dimension">Provides information concerning the configured metric dimension.</param>
+        protected virtual List<MetricDimensionFilterSegment> DetermineMetricDimensionFilterSegments(string metricName, TResourceDefinition resourceDefinition, MetricDimension dimension)
+        {
+            return dimension?.Filter;
         }
 
         /// <summary>

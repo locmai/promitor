@@ -9,6 +9,7 @@ namespace Promitor.Core.Scraping.Configuration.Serialization.v1.Core
             : base(logger)
         {
             Map(dimension => dimension.Name);
+            Map(filters => dimension.Filters);
         }
     }
 }

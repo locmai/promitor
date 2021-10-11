@@ -9,5 +9,7 @@
         ///     Name of the dimension
         /// </summary>
         public string Name { get; set; }
+
+        public List<MetricDimensionFilter> Filter { get; set; }
     }
 }

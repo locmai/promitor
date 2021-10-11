@@ -9,5 +9,10 @@
         ///     Name of the dimension
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        ///     List of filter segments applied
+        /// </summary>
+        public List<MetricDimensionFilterV1> Filters { get; set; }
     }
 }
