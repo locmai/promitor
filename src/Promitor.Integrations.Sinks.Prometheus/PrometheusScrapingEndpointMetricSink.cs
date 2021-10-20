@@ -99,7 +99,9 @@ namespace Promitor.Integrations.Sinks.Prometheus
 
 
             if (measuredMetric.IsMultiDimensional) {
-                labels.Add(measuredMetric.Dimensions);
+                foreach (var dimension in measuredMetric.Dimensions) {
+                    labels.Add(dimension.Key, dimension.Value);
+                }
             }
 
             if (metricDefinition?.Labels?.Any() == true)

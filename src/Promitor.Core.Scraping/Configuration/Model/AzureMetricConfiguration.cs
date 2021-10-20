@@ -1,4 +1,6 @@
-﻿namespace Promitor.Core.Scraping.Configuration.Model
+﻿using System.Collections.Generic;
+
+namespace Promitor.Core.Scraping.Configuration.Model
 {
     public class AzureMetricConfiguration
     {

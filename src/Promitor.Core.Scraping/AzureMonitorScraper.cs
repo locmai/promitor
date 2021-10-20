@@ -132,7 +132,7 @@ namespace Promitor.Core.Scraping
         /// <param name="metricName">Name of the metric being queried</param>
         /// <param name="resourceDefinition">Contains the resource cast to the specific resource type.</param>
         /// <param name="dimensions">Provides information concerning the configured metric dimension.</param>
-        protected virtual string DetermineMetricDimensions(string metricName, TResourceDefinition resourceDefinition, List<MetricDimension> dimensions)
+        protected virtual List<string> DetermineMetricDimensions(string metricName, TResourceDefinition resourceDefinition, List<MetricDimension> dimensions)
         {
             var dimensionNames = new List<string>();
             foreach (var dimension in dimensions) {

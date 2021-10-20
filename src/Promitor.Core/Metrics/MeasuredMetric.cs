@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using GuardNet;
 using Microsoft.Azure.Management.Monitor.Fluent.Models;
 
@@ -116,7 +117,8 @@ namespace Promitor.Core.Metrics
             var dimensions = new Dictionary<string, string>();
 
             foreach (var dimensionName in dimensionNames) {
-                dimensions.Add(dimensionName, timeseries.Metadatavalues.Single(metadataValue => metadataValue.Name?.Value.Equals(dimensionName, StringComparison.InvariantCultureIgnoreCase) == true));
+                var dimensionValue = timeseries.Metadatavalues.Single(metadataValue => metadataValue.Name?.Value.Equals(dimensionName, StringComparison.InvariantCultureIgnoreCase) == true);
+                dimensions.Add(dimensionName, dimensionValue.Value);
             }
 
             return CreateForDimensions(value, dimensions);
@@ -129,7 +131,6 @@ namespace Promitor.Core.Metrics
         /// <param name="dimensions">Dictionary contains pairs of Name/Value of dimensions those are being scraped</param>
         public static MeasuredMetric CreateForDimensions(double? value, Dictionary<string,string> dimensions)
         {
-            Guard.NotNullOrWhitespace(dimensions, nameof(dimensions));
             return new MeasuredMetric(value, dimensions);
         }
     }

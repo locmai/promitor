@@ -1,4 +1,6 @@
-﻿namespace Promitor.Core.Scraping.Configuration.Serialization.v1.Model
+﻿using System.Collections.Generic;
+
+namespace Promitor.Core.Scraping.Configuration.Serialization.v1.Model
 {
     public class AzureMetricConfigurationV1
     {
