@@ -18,6 +18,11 @@
         public MetricDimension Dimension { get; set; }
 
         /// <summary>
+        ///     Information about the dimensions of an Azure Monitor metric
+        /// </summary>
+        public List<MetricDimension> Dimensions { get; set; }
+
+        /// <summary>
         ///     Configuration on how to aggregate the metric
         /// </summary>
         public MetricAggregation Aggregation { get; set; }

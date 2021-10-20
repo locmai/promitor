@@ -27,6 +27,16 @@ namespace Promitor.Core.Metrics
         /// </summary>
         public bool IsDimensional { get; }
 
+        /// <summary>
+        ///     Dimensions' names and values of a metrics
+        /// </summary>
+        public Dictionary<string, string> Dimensions { get; }
+
+        /// <summary>
+        ///     Indication whether or not the metric represents multiple dimensions
+        /// </summary>
+        public bool IsMultiDimensional { get; }
+
         private MeasuredMetric(double? value)
         {
             Value = value;
@@ -42,6 +52,14 @@ namespace Promitor.Core.Metrics
             IsDimensional = true;
             DimensionName = dimensionName;
             DimensionValue = dimensionValue;
+        }
+
+        private MeasuredMetric(double? value, Dictionary<string, string> dimensions)
+        {
+            Value = value;
+
+            IsMultiDimensional = true;
+            Dimensions = dimensions;
         }
 
         /// <summary>
@@ -81,6 +99,38 @@ namespace Promitor.Core.Metrics
             Guard.NotNullOrWhitespace(dimensionValue, nameof(dimensionValue));
 
             return new MeasuredMetric(value, dimensionName, dimensionValue);
+        }
+
+        /// <summary>
+        /// Create a measured metric for given dimensions
+        /// </summary>
+        /// <param name="value">Measured metric value</param>
+        /// <param name="dimensionNames">Names of dimensions those are being scraped</param>
+        /// <param name="timeseries">Timeseries representing one of the dimensions</param>
+        public static MeasuredMetric CreateForDimensions(double? value, List<string> dimensionNames, TimeSeriesElement timeseries)
+        {
+            Guard.For<ArgumentException>(() => dimensionNames.Any() == false);
+            Guard.NotNull(timeseries, nameof(timeseries));
+            Guard.For<ArgumentException>(() => timeseries.Metadatavalues.Any() == false);
+
+            var dimensions = new Dictionary<string, string>();
+
+            foreach (var dimensionName in dimensionNames) {
+                dimensions.Add(dimensionName, timeseries.Metadatavalues.Single(metadataValue => metadataValue.Name?.Value.Equals(dimensionName, StringComparison.InvariantCultureIgnoreCase) == true));
+            }
+
+            return CreateForDimensions(value, dimensions);
+        }
+
+        /// <summary>
+        /// Create a measured metric for a given dimension
+        /// </summary>
+        /// <param name="value">Measured metric value</param>
+        /// <param name="dimensions">Dictionary contains pairs of Name/Value of dimensions those are being scraped</param>
+        public static MeasuredMetric CreateForDimensions(double? value, Dictionary<string,string> dimensions)
+        {
+            Guard.NotNullOrWhitespace(dimensions, nameof(dimensions));
+            return new MeasuredMetric(value, dimensions);
         }
     }
 }

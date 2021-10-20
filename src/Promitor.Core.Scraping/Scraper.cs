@@ -91,13 +91,13 @@ namespace Promitor.Core.Scraping
             catch (ErrorResponseException errorResponseException)
             {
                 HandleErrorResponseException(errorResponseException, scrapeDefinition.PrometheusMetricDefinition.Name);
-                
+
                 ReportScrapingOutcome(scrapeDefinition, isSuccessful: false);
             }
             catch (Exception exception)
             {
                 Logger.LogCritical(exception, "Failed to scrape resource for metric '{MetricName}'", scrapeDefinition.PrometheusMetricDefinition.Name);
-                
+
                 ReportScrapingOutcome(scrapeDefinition, isSuccessful: false);
             }
         }
@@ -146,8 +146,18 @@ namespace Promitor.Core.Scraping
                 }
                 else
                 {
-                    Logger.LogInformation("Found value {MetricValue} for metric {MetricName} with aggregation interval {AggregationInterval}", measuredMetric.Value, scrapeDefinition.PrometheusMetricDefinition.Name, aggregationInterval);
+                    if (measuredMetric.IsMultiDimensional)
+                    {
+                        Logger.LogInformation("Found value {MetricValue} for metric {MetricName} with the dimensions {Dimensions} with aggregation interval {AggregationInterval}", measuredMetric.Value, scrapeDefinition.PrometheusMetricDefinition.Name, DictionaryToString(measuredMetric.Dimensions), aggregationInterval);
+                    }
+                    else
+                    {
+                        {
+                            Logger.LogInformation("Found value {MetricValue} for metric {MetricName} with aggregation interval {AggregationInterval}", measuredMetric.Value, scrapeDefinition.PrometheusMetricDefinition.Name, aggregationInterval);
+                        }
+                    }
                 }
+
             }
         }
 
@@ -225,5 +235,20 @@ namespace Promitor.Core.Scraping
         /// <param name="resource">Contains the resource cast to the specific resource type.</param>
         /// <returns>Uri of Azure resource</returns>
         protected abstract string BuildResourceUri(string subscriptionId, ScrapeDefinition<IAzureResourceDefinition> scrapeDefinition, TResourceDefinition resource);
+
+        /// <summary>
+        /// Parse dictionary to string for logging format
+        /// </summary>
+        /// <param name="dictionary">The dictionary to be parsed</param>
+        /// <returns>String format of the dictionary</returns>
+        private string DictionaryToString(Dictionary<string, string> dictionary)
+        {
+            string dictionaryString = "{";
+            foreach (KeyValuePair<string, string> keyValues in dictionary)
+            {
+                dictionaryString += keyValues.Key + " : " + keyValues.Value + ", ";
+            }
+            return dictionaryString.TrimEnd(',', ' ') + "}";
+        }
     }
 }

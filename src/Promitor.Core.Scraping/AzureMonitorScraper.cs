@@ -47,17 +47,21 @@ namespace Promitor.Core.Scraping
             // Determine the metric dimension to use, if any
             var dimensionName = DetermineMetricDimension(metricName, resourceDefinition, scrapeDefinition.AzureMetricConfiguration?.Dimension);
 
+            // Determine the metric dimensions to use, if any 
+            var dimensionNames = DetermineMetricDimensions(metricName, resourceDefinition, scrapeDefinition.AzureMetricConfiguration?.Dimensions);
+
             List<MeasuredMetric> measuredMetrics = new List<MeasuredMetric>();
             try
             {
                 // Query Azure Monitor for metrics
-                measuredMetrics = await AzureMonitorClient.QueryMetricAsync(metricName, dimensionName, aggregationType, aggregationInterval, resourceUri, metricFilter, metricLimit);
+                measuredMetrics = await AzureMonitorClient.QueryMetricAsync(metricName, dimensionName, dimensionNames, aggregationType, aggregationInterval, resourceUri, metricFilter, metricLimit);
             }
             catch (MetricInformationNotFoundException metricsNotFoundException)
             {
                 Logger.LogWarning("No metric information found for metric {MetricName} with dimension {MetricDimension}. Details: {Details}", metricsNotFoundException.Name, metricsNotFoundException.Dimension, metricsNotFoundException.Details);
                 
                 var measuredMetric = string.IsNullOrWhiteSpace(dimensionName) ? MeasuredMetric.CreateWithoutDimension(null) : MeasuredMetric.CreateForDimension(null, dimensionName, "unknown");
+
                 measuredMetrics.Add(measuredMetric);
             }
 
@@ -120,6 +124,21 @@ namespace Promitor.Core.Scraping
         protected virtual Dictionary<string, string> DetermineMetricLabels(TResourceDefinition resourceDefinition)
         {
             return new Dictionary<string, string>();
+        }
+
+        /// <summary>
+        ///     Determines the dimensions for a metric to use
+        /// </summary>
+        /// <param name="metricName">Name of the metric being queried</param>
+        /// <param name="resourceDefinition">Contains the resource cast to the specific resource type.</param>
+        /// <param name="dimensions">Provides information concerning the configured metric dimension.</param>
+        protected virtual string DetermineMetricDimensions(string metricName, TResourceDefinition resourceDefinition, List<MetricDimension> dimensions)
+        {
+            var dimensionNames = new List<string>();
+            foreach (var dimension in dimensions) {
+                dimensionNames.Add(dimension.Name);
+            }
+            return dimensionNames;
         }
     }
 }

@@ -869,7 +869,7 @@ namespace Promitor.Tests.Unit.Builders.Metrics.v1
             _metrics.Add(metric);
         }
 
-        private AzureMetricConfigurationV1 CreateAzureMetricConfiguration(string azureMetricName, int? azureMetricLimit, string metricDimension = "")
+        private AzureMetricConfigurationV1 CreateAzureMetricConfiguration(string azureMetricName, int? azureMetricLimit, string metricDimension = "", List<string> metricDimensions)
         {
             var metricConfig = new AzureMetricConfigurationV1
             {
@@ -887,6 +887,15 @@ namespace Promitor.Tests.Unit.Builders.Metrics.v1
                 {
                     Name = metricDimension
                 };
+            }
+
+            if (metricDimensions?.Any()) {
+                var dimensions = new List<MetricDimensionV1>();
+                foreach (var dimension in metricDimensions) {
+                    dimensions.Add(new MetricDimensionV1{Name = dimension});
+                }
+
+                metricConfig.Dimensions = dimensions;
             }
 
             return metricConfig;
