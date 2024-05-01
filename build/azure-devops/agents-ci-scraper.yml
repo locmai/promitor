@@ -75,6 +75,7 @@ stages:
    - job: DockerBuildLinux
      displayName: Build Docker Image (Linux)
      condition: succeeded()
+     timeoutInMinutes: 180
      pool:
        vmImage: ubuntu-latest
      variables:
@@ -182,8 +183,9 @@ stages:
    - job: DockerBuildWindows
      displayName: Build Docker Image (Windows)
      condition: succeeded()
+     timeoutInMinutes: 180
      pool:
-       vmImage: windows-2019
+       vmImage: windows-latest
      variables:
        OS.Name: 'windows'
      steps:

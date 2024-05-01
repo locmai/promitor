@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <RuntimeFrameworkVersion>7.0.12</RuntimeFrameworkVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeFrameworkVersion>8.0.2</RuntimeFrameworkVersion>
 </PropertyGroup>
 
 <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.10.3" />
-    <PackageReference Include="Azure.Monitor.Query" Version="1.2.0" />
+    <PackageReference Include="Azure.Identity" Version="1.11.2" />
+    <PackageReference Include="Azure.Monitor.Query" Version="1.3.1" />
     <PackageReference Include="Guard.Net" Version="3.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.ResourceManager.Fluent" Version="1.38.1" />
     <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.2.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
 </ItemGroup>
 
 </Project>
