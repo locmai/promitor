@@ -28,7 +28,7 @@ jobs:
 
         # Install .NET
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.dotnetVersion }}
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.dotnetVersion }}
 
@@ -63,7 +63,7 @@ jobs:
         run: dotnet restore src/Promitor.sln
 
       - name: R# Code Quality
-        uses: muno92/resharper_inspectcode@1.11.7
+        uses: muno92/resharper_inspectcode@1.11.10
         with:
           solutionPath: src/Promitor.sln
           minimumSeverity: warning
